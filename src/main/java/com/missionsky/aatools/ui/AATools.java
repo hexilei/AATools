@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -64,6 +63,7 @@ import com.missionsky.aatools.loganalyst.WebLogAnalyst;
 import com.missionsky.aatools.logplus.LogsUtil;
 import com.missionsky.aatools.qatracer.QATracer;
 import com.missionsky.aatools.swtdesigner.SWTResourceManager;
+import com.missionsky.aatools.util.MessageUtil;
 import com.missionsky.aatools.v360text.V360TextGenerator;
 
 
@@ -719,7 +719,7 @@ public class AATools
 		MessageDialog.openInformation(
 			shlDbSwitcher,
 			"About AATools",
-			"AA Tools V2.0\r\n\r\nJohn Huang 出品, 必属精品!");
+			"AA Tools V2.1\r\n\r\nJohn Huang 出品, 必属精品!");
 	}
 	
 	private void search() {
@@ -1391,13 +1391,13 @@ public class AATools
 					List<String> infoList = new ArrayList<String>(); 
 					if(txtKey.getText() == null || txtKey.getText()== "")
 					{
-						showMessage("不合规矩","STRING_KEY不能为空");
+						showMessage(null,MessageUtil.getText("error_empty_string_key"));
 						return;
 					}
 					infoList = V360TextGenerator.retrieveInfo(txtKey.getText(), target);
 					if(infoList.size() == 0)
 					{
-						showMessage("错误提示","没有这条STRING_KEY");
+						showMessage(null,MessageUtil.getText("error_nofound_string_key"));
 					}
 					else
 					{
@@ -1435,18 +1435,18 @@ public class AATools
 					boolean flag = false ;
 					if(txtKey.getText() == null || txtKey.getText()== "")
 					{
-						showMessage("不合规矩","STRING_KEY不能为空");
+						showMessage(null,MessageUtil.getText("error_empty_string_key"));
 						return;
 					}
 					if(txtValue.getText() == null || txtValue.getText()== "")
 					{
-						showMessage("不合规矩","STRING_VALUE不能为空");
+						showMessage(null,MessageUtil.getText("error_empty_string_value"));
 						return;
 					}
 					flag = V360TextGenerator.updateText(txtKey.getText(), txtValue.getText(), txtCategory.getText(), txtDate.getText(), txtRecName.getText(), btnPopCommitWindow.getSelection(), target, flag);
 					if(!flag)
 					{
-						showMessage("错误提示","没有这条STRING_KEY");
+						showMessage(null,MessageUtil.getText("error_nofound_string_key"));
 					}
 					else
 					{
@@ -1476,11 +1476,11 @@ public class AATools
 				{
 					if(txtKey.getText() == null || txtKey.getText()== "")
 					{
-						showMessage("不合规矩","STRING_KEY不能为空");
+						showMessage(null,MessageUtil.getText("error_empty_string_key"));
 						return;
 					}
 					if (!txtKey.getText().toLowerCase().equals(txtKey.getText())) {
-						showMessage("不合规矩", "STRING_KEY必须是小�?");
+						showMessage(null,MessageUtil.getText("error_lowercase_string_key")); 
 						return;
 					}
 					V360TextGenerator.addText(txtKey.getText(), txtValue.getText(), txtCategory.getText(), txtDate.getText(), txtRecName.getText(), txtStatus.getText(), btnPopCommitWindow.getSelection(), target);
@@ -1563,7 +1563,7 @@ public class AATools
 		composite_12.setLayoutData(gridData_1);
 		
 		Button btnReset = new Button(composite_12, SWT.NONE);
-		btnReset.setText("先点这里设置起始点");
+		btnReset.setText(MessageUtil.getText("msg_trace_start"));
 		btnReset.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1583,7 +1583,7 @@ public class AATools
 		
 		
 		Button btnView = new Button(composite_12, SWT.NONE);
-		btnView.setText("操作页面后再点这里查看结果");
+		btnView.setText(MessageUtil.getText("msg_trace_end"));
 		btnView.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

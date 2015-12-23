@@ -49,7 +49,8 @@ public class V360TextGenerator
 		"v360text_zh_cn.csv",
 		"v360text_zh_tw.csv",
 		"v360text_fr_ca.csv",
-		"v360text_vi_vn.csv"
+		"v360text_vi_vn.csv",
+		"v360text_pt_pt.csv"
 	};
 	
 	public final static String[] value_suffix = {
@@ -60,7 +61,8 @@ public class V360TextGenerator
 		"_中文",
 		"_繁體",
 		"_FR",
-		"_VN"
+		"_VN",
+		""
 	};
 	
 	public final static byte[][] value_suffix1 = {
@@ -109,8 +111,6 @@ public class V360TextGenerator
 						String[] marks = line.split("\"");
 						tempValue = marks[1] ;
 						line = line.replace(marks[1], marks[1].replaceAll(",", "."));
-						
-						
 					}
 					String[] temps = line.split(",");
 					if(temps[0].equalsIgnoreCase(strKey))
