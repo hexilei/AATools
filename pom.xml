@@ -19,8 +19,12 @@
 			<id>swt-repo</id>
 			<url>https://raw.githubusercontent.com/maven-eclipse/swt-repo/master/</url>
 		</repository>
+		<repository>
+			<id>jgit-repository</id>
+			<url>http://download.eclipse.org/jgit/maven</url>
+		</repository>
 	</repositories>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -103,5 +107,22 @@
 			<artifactId>tools</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>3.4.1.201406201815-r</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kohsuke</groupId>
+			<artifactId>github-api</artifactId>
+			<version>1.72</version>
+		</dependency>
 	</dependencies>
+	<mailingLists>
+		<mailingList>
+			<name>User List</name>
+			<post>louis.he@missionsky.com</post>
+			<archive>###</archive>
+		</mailingList>
+	</mailingLists>
 </project>

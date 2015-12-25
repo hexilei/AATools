@@ -1,4 +1,5 @@
+connection.properties
 target/test-classes
 target/surefire-reports
+target/maven-status
 classes
-connection.properties

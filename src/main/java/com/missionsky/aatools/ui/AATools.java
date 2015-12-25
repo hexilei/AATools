@@ -1,4 +1,5 @@
 package com.missionsky.aatools.ui;
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -63,7 +64,7 @@ import com.missionsky.aatools.loganalyst.WebLogAnalyst;
 import com.missionsky.aatools.logplus.LogsUtil;
 import com.missionsky.aatools.qatracer.QATracer;
 import com.missionsky.aatools.swtdesigner.SWTResourceManager;
-import com.missionsky.aatools.util.MessageUtil;
+import com.missionsky.aatools.util.ToolsUtil;
 import com.missionsky.aatools.v360text.V360TextGenerator;
 
 
@@ -437,15 +438,15 @@ public class AATools
 						showErrorMessage("Switch to '" + selectedConnection.getName() + "' failed: " + ConnectionUtil.getLastErrorMessage());
 					}
 				}
-				else {
-					if (DBProxy.start()) {
-						showMessage("Switch to '" + currentConnection.getName() + "' successfully!\r\nNotice: Please login V360 and clear the cache at first!");
-						if (withAA) AADbSwitcher.runChangeToBat(currentConnection.getAAVersion(), currentConnection.getType());
-					}
-					else {
-						showErrorMessage("Switch to '" + selectedConnection.getName() + "' failed: " + ConnectionUtil.getLastErrorMessage());
-					}
-				}
+//				else {
+//					if (DBProxy.start()) {
+//						showMessage("Switch to '" + currentConnection.getName() + "' successfully!\r\nNotice: Please login V360 and clear the cache at first!");
+//						if (withAA) AADbSwitcher.runChangeToBat(currentConnection.getAAVersion(), currentConnection.getType());
+//					}
+//					else {
+//						showErrorMessage("Switch to '" + selectedConnection.getName() + "' failed: " + ConnectionUtil.getLastErrorMessage());
+//					}
+//				}
 			}
 			else {
 				showErrorMessage("Switch to '" + selectedConnection.getName() + "' failed: " + ConnectionUtil.getLastErrorMessage());
@@ -808,6 +809,13 @@ public class AATools
 		}
 	};
 	
+	Listener switchListener = new Listener()
+	{
+		public void handleEvent(Event event) {
+			
+		}
+	};
+	
 	private Text txtTraceResults;
 	private Text txtLogResults;
 	private Text txtContent;
@@ -827,6 +835,42 @@ public class AATools
 	private Text txtFID;
 	private Text txtWS;
 	private Text txtReport;
+	private Text targetRootPath;
+	private Text txtComment;
+	private Text txtSwitchFolder;
+	
+	/**
+	 * Check whether the given workspace is validate
+	 * @return
+	 */
+	private boolean checkTargetRootPath()
+	{
+		String path = targetRootPath.getText().trim();
+		if(path.equals(""))
+		{
+			return false;
+		}
+		File file = new File(path + V360TextGenerator.TEXT_PATH);
+		if(!file.exists())
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Check comment
+	 * @return
+	 */
+	private boolean checkComment()
+	{
+		String comment = txtComment.getText().trim();
+		if("".equals(comment))
+		{
+			return false;
+		}
+		return true;
+	}
 	
 	/**
 	 * Create contents of the window.
@@ -949,6 +993,18 @@ public class AATools
 		composite_4.setLayout(rowLayout_1);
 		composite_4.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
 		
+		txtSwitchFolder = new Text(composite_4, SWT.BORDER);
+		txtSwitchFolder.setText(ToolsUtil.getText("info_swith_path"));
+		txtSwitchFolder.addListener(SWT.FocusIn, new Listener()
+		{
+			public void handleEvent(Event event)
+			{
+				
+			}
+		});
+		
+		
+		
 		Button btnSwitch = new Button(composite_4, SWT.NONE);
 		btnSwitch.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -1051,6 +1107,7 @@ public class AATools
 		txtKeyword = new Text(composite_4, SWT.BORDER);
 		txtKeyword.addListener(SWT.KeyDown, searchListener);
 		
+		
 		Button btnSearch_1 = new Button(composite_4, SWT.NONE);
 		btnSearch_1.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -1146,6 +1203,7 @@ public class AATools
 		// --DB Sheet end
 		
 		// --QA Tracer begin
+		/*
 		TabItem tbtmQaTracer = new TabItem(tabFolder, SWT.NONE);
 		tbtmQaTracer.setToolTipText("QA Tracer");
 		tbtmQaTracer.setText("QA Tracer");
@@ -1187,6 +1245,7 @@ public class AATools
 		txtTraceResults.setText("User Guide: \r\n\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\r\n1. \u767B\u5F55\uFF1A https://maintenance.achievo.com:5443/\r\n2. \u6D4F\u89C8\u5230\u8981\u8DDF\u8E2A\u7684Portlet\u9875\u9762\r\n3. \u70B9\u51FB\u201C\u5F00\u59CB\u8DDF\u8E2A\u201D\u6309\u94AE\r\n4. \u518D\u6B21\u5237\u65B0\u8981\u8DDF\u8E2A\u7684\u9875\u9762 \uFF08\u5728Portlet\u9875\u9762\u4E0A\u70B9\u53F3\u952E\uFF0C\u9009Refresh\uFF09\r\n5. \u5F85\u9875\u9762\u91CD\u65B0\u8F7D\u5165\u540E\uFF0C\u518D\u70B9\u51FB\u201C\u67E5\u770B\u7ED3\u679C\u6309\u94AE\u201D");
 		txtTraceResults.setFont(SWTResourceManager.getFont("Tahoma", 9, SWT.NORMAL));
 		txtTraceResults.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		*/
 		// --QA Tracer end
 		
 		// --Log Analyst begin
@@ -1296,32 +1355,18 @@ public class AATools
 		gridLayout.marginTop = 5;
 		composite_1.setLayout(gridLayout);
 		
-		Label lblTargetVersions = new Label(composite_1, SWT.NONE);
-		lblTargetVersions.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblTargetVersions.setAlignment(SWT.RIGHT);
-		lblTargetVersions.setText("Target Versions:");
+		Label strPath = new Label(composite_1, SWT.NONE);
+		strPath.setAlignment(SWT.RIGHT);
+		strPath.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		strPath.setText(ToolsUtil.getText("msg_target_path"));
 		
-		final Button chk670 = new Button(composite_1, SWT.CHECK);
-		chk670.setText("6.7.0");
-		
-		final Button chk700 = new Button(composite_1, SWT.CHECK);
-		chk700.setText("7.0.0");
-		
-		final Button chk705 = new Button(composite_1, SWT.CHECK);
-		chk705.setText("7.0.5");
-		
-		final Button chk710 = new Button(composite_1, SWT.CHECK);
-		chk710.setSelection(true);
-		chk710.setText("7.1.0");
-		
-		final Button chk720 = new Button(composite_1, SWT.CHECK);
-		chk720.setSelection(true);
-		chk720.setText("7.2.0");
+		targetRootPath = new Text(composite_1, SWT.BORDER);
+		targetRootPath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 5, 1));
 		
 		Label lblStringkey = new Label(composite_1, SWT.NONE);
 		lblStringkey.setAlignment(SWT.RIGHT);
 		lblStringkey.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblStringkey.setText("STRING_KEY:");
+		lblStringkey.setText(ToolsUtil.getText("msg_string_key"));
 		
 		txtKey = new Text(composite_1, SWT.BORDER);
 		txtKey.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 5, 1));
@@ -1329,7 +1374,7 @@ public class AATools
 		Label lblStringvalue = new Label(composite_1, SWT.NONE);
 		lblStringvalue.setAlignment(SWT.RIGHT);
 		lblStringvalue.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblStringvalue.setText("STRING_VALUE: ");
+		lblStringvalue.setText(ToolsUtil.getText("msg_string_value"));
 		
 		txtValue = new Text(composite_1, SWT.BORDER);
 		txtValue.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 5, 1));
@@ -1337,7 +1382,7 @@ public class AATools
 		Label lblCategoryname = new Label(composite_1, SWT.NONE);
 		lblCategoryname.setAlignment(SWT.RIGHT);
 		lblCategoryname.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblCategoryname.setText("CATEGORY_NAME: ");
+		lblCategoryname.setText(ToolsUtil.getText("msg_category_name"));
 		
 		txtCategory = new Text(composite_1, SWT.BORDER);
 		txtCategory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 5, 1));
@@ -1345,7 +1390,7 @@ public class AATools
 		Label lblRecdate = new Label(composite_1, SWT.NONE);
 		lblRecdate.setAlignment(SWT.RIGHT);
 		lblRecdate.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblRecdate.setText("REC_DATE: ");
+		lblRecdate.setText(ToolsUtil.getText("msg_rec_date"));
 		
 		txtDate = new Text(composite_1, SWT.BORDER);
 		txtDate.setText(getCurDateStr());
@@ -1354,7 +1399,7 @@ public class AATools
 		Label lblRecfulnam = new Label(composite_1, SWT.NONE);
 		lblRecfulnam.setAlignment(SWT.RIGHT);
 		lblRecfulnam.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblRecfulnam.setText("REC_FUL_NAM: ");
+		lblRecfulnam.setText(ToolsUtil.getText("msg_author"));
 		
 		txtRecName = new Text(composite_1, SWT.BORDER);
 		txtRecName.setText("ADMIN");
@@ -1363,7 +1408,7 @@ public class AATools
 		Label lblRecstatus = new Label(composite_1, SWT.NONE);
 		lblRecstatus.setAlignment(SWT.RIGHT);
 		lblRecstatus.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblRecstatus.setText("REC_STATUS: ");
+		lblRecstatus.setText(ToolsUtil.getText("msg_status"));
 		
 		txtStatus = new Text(composite_1, SWT.BORDER);
 		txtStatus.setText("A");
@@ -1375,6 +1420,15 @@ public class AATools
 		
 		final Button btnPopCommitWindow = new Button(composite_1, SWT.CHECK);
 		btnPopCommitWindow.setSelection(true);
+		btnPopCommitWindow.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 5, 1));
+		
+		Label lblComment = new Label(composite_1, SWT.NONE);
+		lblComment.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblComment.setText(ToolsUtil.getText("msg_comment"));
+		
+	    Text txtComment = new Text(composite_1, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+	    txtComment.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 5, 1));
+		
 		new Label(composite_1, SWT.NONE);
 		new Label(composite_1, SWT.NONE);
 		new Label(composite_1, SWT.NONE);
@@ -1385,19 +1439,24 @@ public class AATools
 		btnRtrText.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean[] target = new boolean[] {chk670.getSelection(), chk700.getSelection(), chk705.getSelection(), chk710.getSelection(), chk720.getSelection() };
+				boolean target = checkTargetRootPath();
+				if(!target)
+				{
+					showMessage(null,ToolsUtil.getText("error_target_path"));
+					return;
+				}
 				try
 				{
 					List<String> infoList = new ArrayList<String>(); 
 					if(txtKey.getText() == null || txtKey.getText()== "")
 					{
-						showMessage(null,MessageUtil.getText("error_empty_string_key"));
+						showMessage(null,ToolsUtil.getText("error_empty_string_key"));
 						return;
 					}
-					infoList = V360TextGenerator.retrieveInfo(txtKey.getText(), target);
+					infoList = V360TextGenerator.retrieveInfo(txtKey.getText(),targetRootPath.getText());
 					if(infoList.size() == 0)
 					{
-						showMessage(null,MessageUtil.getText("error_nofound_string_key"));
+						showMessage(null,ToolsUtil.getText("error_nofound_string_key"));
 					}
 					else
 					{
@@ -1419,51 +1478,6 @@ public class AATools
 		
 		btnRtrText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		btnRtrText.setText("Retrieve Info by String_Key");
-		
-		Label lblArrow = new Label(composite_1, SWT.NONE);
-		lblArrow.setAlignment(SWT.RIGHT);
-		lblArrow.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblArrow.setText("==> ");
-		
-		Button btnUpdText = new Button(composite_1, SWT.NONE);
-		btnUpdText.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean[] target = new boolean[] {chk670.getSelection(), chk700.getSelection(), chk705.getSelection(), chk710.getSelection(), chk720.getSelection() };
-				try
-				{
-					boolean flag = false ;
-					if(txtKey.getText() == null || txtKey.getText()== "")
-					{
-						showMessage(null,MessageUtil.getText("error_empty_string_key"));
-						return;
-					}
-					if(txtValue.getText() == null || txtValue.getText()== "")
-					{
-						showMessage(null,MessageUtil.getText("error_empty_string_value"));
-						return;
-					}
-					flag = V360TextGenerator.updateText(txtKey.getText(), txtValue.getText(), txtCategory.getText(), txtDate.getText(), txtRecName.getText(), btnPopCommitWindow.getSelection(), target, flag);
-					if(!flag)
-					{
-						showMessage(null,MessageUtil.getText("error_nofound_string_key"));
-					}
-					else
-					{
-						showMessage("Success","Update successfully, please commit it!");
-					}
-					
-				}
-				catch (Exception e1)
-				{
-					e1.printStackTrace();
-					showErrorMessage(e1.getMessage());
-				}
-			}
-		});
-		
-		btnUpdText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-		btnUpdText.setText("Update(The field which left empty means won't change original data)");
 			
 		new Label(composite_1, SWT.NONE);	
 		
@@ -1471,19 +1485,25 @@ public class AATools
 		btnAddText.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean[] target = new boolean[] {chk670.getSelection(), chk700.getSelection(), chk705.getSelection(), chk710.getSelection(), chk720.getSelection() };
+				boolean target = checkTargetRootPath();
+				boolean comment = checkComment();
+				if(!target && comment)
+				{
+					showMessage(null,ToolsUtil.getText("error_commit_comment"));
+					return;
+				}
 				try
 				{
 					if(txtKey.getText() == null || txtKey.getText()== "")
 					{
-						showMessage(null,MessageUtil.getText("error_empty_string_key"));
+						showMessage(null,ToolsUtil.getText("error_empty_string_key"));
 						return;
 					}
 					if (!txtKey.getText().toLowerCase().equals(txtKey.getText())) {
-						showMessage(null,MessageUtil.getText("error_lowercase_string_key")); 
+						showMessage(null,ToolsUtil.getText("error_lowercase_string_key")); 
 						return;
 					}
-					V360TextGenerator.addText(txtKey.getText(), txtValue.getText(), txtCategory.getText(), txtDate.getText(), txtRecName.getText(), txtStatus.getText(), btnPopCommitWindow.getSelection(), target);
+					V360TextGenerator.addText(txtKey.getText(), txtValue.getText(), txtCategory.getText(), txtDate.getText(), txtRecName.getText(), txtStatus.getText(), btnPopCommitWindow.getSelection(), targetRootPath.getText().trim());
 					showErrorMessage("Added successfully, please commit it!");
 				}
 				catch (Exception e1)
@@ -1497,56 +1517,14 @@ public class AATools
 		btnAddText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 5, 1));
 		btnAddText.setText("Add");
 		
-		Label lblGoToText = new Label(composite_1, SWT.NONE);
-		lblGoToText.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblGoToText.setText("Go to Text Folder: ");
-		
-		Button button_670 = new Button(composite_1, SWT.NONE);
-		button_670.addSelectionListener(new SelectionAdapter() {
+		Button btnOpenFolder = new Button(composite_1, SWT.NONE);
+		btnOpenFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				openFolder(V360TextGenerator.paths[0]);
+				openFolder(targetRootPath.getText() + V360TextGenerator.TEXT_PATH);
 			}
 		});
-		button_670.setText("6.7.0");
-		
-		Button button_700 = new Button(composite_1, SWT.NONE);
-		button_700.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				openFolder(V360TextGenerator.paths[1]);
-			}
-		});
-		button_700.setText("7.0.0");
-		
-		Button button_705 = new Button(composite_1, SWT.NONE);
-		button_705.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				openFolder(V360TextGenerator.paths[2]);
-			}
-		});
-		button_705.setText("7.0.5");
-		
-		Button button_710 = new Button(composite_1, SWT.NONE);
-		button_710.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				openFolder(V360TextGenerator.paths[3]);
-			}
-		});
-		button_710.setText("7.1.0");
-		
-		Button button_720 = new Button(composite_1, SWT.NONE);
-		button_720.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				openFolder(V360TextGenerator.paths[4]);
-			}
-		});
-		button_720.setText("7.2.0");
-		// V360 Text end
-		
+		btnOpenFolder.setText("Open folder...");
 		
 		// Log++ begin
 		TabItem tbtmLog = new TabItem(tabFolder, SWT.NONE);
@@ -1563,7 +1541,7 @@ public class AATools
 		composite_12.setLayoutData(gridData_1);
 		
 		Button btnReset = new Button(composite_12, SWT.NONE);
-		btnReset.setText(MessageUtil.getText("msg_trace_start"));
+		btnReset.setText(ToolsUtil.getText("msg_trace_start"));
 		btnReset.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1583,7 +1561,7 @@ public class AATools
 		
 		
 		Button btnView = new Button(composite_12, SWT.NONE);
-		btnView.setText(MessageUtil.getText("msg_trace_end"));
+		btnView.setText(ToolsUtil.getText("msg_trace_end"));
 		btnView.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

@@ -116,7 +116,7 @@ public class QATracer
 	
 	// monitor MenuBarUtil FID
 	public final static String MENUBARUTIL = "com.accela.av360.framework.web.MenuBarUtil";
-	public final static int MENUBARUTIL_POINT = 956;
+	public final static int MENUBARUTIL_POINT = 734;//956;
 	
 	// monitor TabBarUtil FID
 	public final static String TABBARUTIL = "com.accela.av360.framework.web.TabBarUtil";
@@ -225,7 +225,7 @@ public class QATracer
 	private static VirtualMachine attachVM(AttachingConnector connector, int port) throws Exception {
 		Map<String, Connector.Argument> arguments = connector.defaultArguments();
         (arguments.get("port")).setValue(Integer.toString(port));
-        (arguments.get("hostname")).setValue("10.50.0.81");
+        (arguments.get("hostname")).setValue("192.168.0.148");
         VirtualMachine vm = connector.attach(arguments);
         return vm;
 	}

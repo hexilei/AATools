@@ -37,7 +37,7 @@ public class ServerConfigUtil {
 	
 	private static final String FILE_CONFIGURE = "configuration.properties";
 	
-	private static String basePath = null; 
+	private static String basePath = null;
 	
 	static
 	{
